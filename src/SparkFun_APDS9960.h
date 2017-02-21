@@ -286,6 +286,15 @@ public:
     /* Gesture methods */
     bool isGestureAvailable();
     int readGesture();
+
+    /* Read raw gesture data, returns true if there's valid data, false if not */
+    bool readGestureData(uint8_t& up, uint8_t& down, uint8_t& left, uint8_t& right);
+
+    /* Gesture threshold control */
+    uint8_t getGestureEnterThresh();
+    bool setGestureEnterThresh(uint8_t threshold);
+    uint8_t getGestureExitThresh();
+    bool setGestureExitThresh(uint8_t threshold);
     
 private:
 
@@ -309,12 +318,6 @@ private:
     bool setProxGainCompEnable(uint8_t enable);
     uint8_t getProxPhotoMask();
     bool setProxPhotoMask(uint8_t mask);
-    
-    /* Gesture threshold control */
-    uint8_t getGestureEnterThresh();
-    bool setGestureEnterThresh(uint8_t threshold);
-    uint8_t getGestureExitThresh();
-    bool setGestureExitThresh(uint8_t threshold);
     
     /* Gesture LED, gain, and time control */
     uint8_t getGestureWaitTime();

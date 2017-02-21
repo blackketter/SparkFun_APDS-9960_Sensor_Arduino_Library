@@ -572,6 +572,53 @@ int SparkFun_APDS9960::readGesture()
 }
 
 /**
+ * @brief Read raw gesture data from FIFO. Non-blocking.
+ *
+ * @return  true if there is valid data for all four directions, false otherwise
+ */
+bool SparkFun_APDS9960::readGestureData(uint8_t& up, uint8_t& down, uint8_t& left, uint8_t& right)
+{
+    uint8_t fifo_level = 0;
+    uint8_t bytes_read = 0;
+    uint8_t fifo_data[4];
+
+    /* Make sure that power and gesture is on and data is valid */
+    if( !isGestureAvailable() || !(getMode() & 0b01000001) ) {
+        return false;
+    }
+
+    /* Read the current FIFO level */
+    if( !wireReadDataByte(APDS9960_GFLVL, fifo_level) ) {
+        return false;
+    }
+
+#if DEBUG
+    Serial.printf("FIFO Level: %d\n", fifo_level);
+#endif
+
+    if (fifo_level < 1) {
+      return false;
+    }
+
+    bytes_read = wireReadDataBlock(  APDS9960_GFIFO_U, (uint8_t*)fifo_data, 4);
+
+    if( bytes_read != 4 ) {
+        return false;
+    }
+
+    up = fifo_data[0];
+    down = fifo_data[1];
+    left = fifo_data[2];
+    right = fifo_data[3];
+
+#if DEBUG
+    Serial.printf("Gesture data up:%3d down:%3d left:%3d right:%3d\n", fifo_data[0],fifo_data[1],fifo_data[2],fifo_data[3]);
+#endif
+
+    return true;
+};
+
+/**
  * Turn the APDS-9960 on
  *
  * @return True if operation successful. False otherwise.
